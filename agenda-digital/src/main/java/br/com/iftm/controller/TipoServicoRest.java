@@ -1,103 +1,129 @@
 package br.com.iftm.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+import javax.websocket.server.PathParam;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.iftm.business.BusinessExecption;
+import br.com.iftm.business.TipoServicoBusiness;
+import br.com.iftm.business.impl.TipoServicoBusinessImpl;
 import br.com.iftm.entily.TipoServico;
 
-
-@RestController //habilita Classe como um servico rest.
-@RequestMapping(value="/tiposervico") // Nome do Serviço.
+@RestController // habilita Classe como um servico rest.
+@RequestMapping(value = "/tiposervico") // Nome do Serviço.
 public class TipoServicoRest {
 
-	private List<TipoServico> lista = new ArrayList<>();
-	private int indice = 0;
-	
-	//create
+	private TipoServicoBusiness business = new TipoServicoBusinessImpl(); // acessando a classe
+
+	// CREATE
 	@PostMapping()
-	public ResponseEntity<?> create(@RequestBody TipoServico tipoServico){ //requestBody está vindo no corpo da requisição
-		
-		//validação se está preenchido ou não
-		if(StringUtils.isEmpty(tipoServico.getNome() )) {
-			
-			return ResponseEntity.badRequest().body("Nome Requerido!");
+	public ResponseEntity<?> create(@RequestBody TipoServico tipoServico) { // requestBody está vindo no corpo da
+																			// requisição
+
+		// pegando da camada de negócio
+		try {
+			tipoServico = business.create(tipoServico);
+
+			// devolve o objeto criado
+			return ResponseEntity.ok(tipoServico);
+		} catch (BusinessExecption e) {
+			e.printStackTrace();
+
+			// mensagem de erro
+			return ResponseEntity.badRequest().body(e);
 		}
-		
-		//numero do codigo em sequencia
-		tipoServico.setCodigo(indice++);
-		
-		//envia para a lista
-		lista.add(tipoServico);
-		
-		//devolve o objeto criado
-		return ResponseEntity.ok(tipoServico);
 	}
-	
-	
-	//read
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	// READ
 	@GetMapping
-	public ResponseEntity<?> read(){
-		
-		return ResponseEntity.ok(lista);
+	public ResponseEntity<?> read() {
+
+		try {
+			List<TipoServico> retornaLista = business.read();
+
+			if (retornaLista.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			} else {
+				// devolve a lista
+				return ResponseEntity.ok(retornaLista);
+			}
+
+		} catch (BusinessExecption e) {
+			// mensagem de erro
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(e); // retorna um codigo de badRequest
+		}
 	}
-	
-	//update
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	// READ BY NAME (buscar por nome)
+	@GetMapping("/filtro/nome") // rota que será retornada algum dado
+	public ResponseEntity<?> readByName(@PathParam("nome") String nome) {
+
+		try {
+			List<TipoServico> retornaLista = business.readByName(nome);
+
+			if (retornaLista.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			} else {
+				// devolve a lista
+				return ResponseEntity.ok(retornaLista);
+			}
+
+		} catch (BusinessExecption e) {
+			// mensagem de erro
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(e); // retorna um codigo de badRequest
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+
+	// UPDATE
 	@PutMapping
-	public ResponseEntity<?> update(@RequestBody TipoServico tipoServico){ //requestBody está vindo no corpo da requisição
-		
-		if(tipoServico.getCodigo() == null) {
-			
-			return ResponseEntity.badRequest().body("Nome Requerido!");
+	public ResponseEntity<?> update(@RequestBody TipoServico tipoServico) { // requestBody está vindo no corpo da
+																			// requisição
+
+		// pegando da camada de negócio
+		try {
+			tipoServico = business.update(tipoServico);
+
+			// devolve o objeto criado
+			return ResponseEntity.ok(tipoServico);
+		} catch (BusinessExecption e) {
+			e.printStackTrace();
+			// mensagem de erro
+			return ResponseEntity.badRequest().body(e);
 		}
-		
-		//validação se está preenchido ou não
-		if(StringUtils.isEmpty(tipoServico.getNome() )) {
-			
-			return ResponseEntity.badRequest().body("Nome Requerido!");
-		}
-		
-		
-		
-		for(TipoServico tipoServico2 : lista) {
-			
-			if(tipoServico2.getCodigo().equals(tipoServico.getCodigo() )) {
-				tipoServico2.setNome(tipoServico.getNome());
-			}
-		}
-		
-		//devolve o objeto criado
-		return ResponseEntity.ok(tipoServico);
 	}
-	
-	//delete
-	@DeleteMapping
-	public ResponseEntity<?> delete(@RequestBody TipoServico tipoServico){
-		
-		if(StringUtils.isEmpty(tipoServico.getNome() )) {
-			
-			return ResponseEntity.badRequest().body("Nome Requerido!");
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
+
+	// DELETE
+	@DeleteMapping(value = "/{id}") // deletando pelo código, no caso ID
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
+
+		try {
+			business.delete(id);
+			return ResponseEntity.ok().build();
+
+		} catch (BusinessExecption e) {
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(e);
 		}
-		
-		for(TipoServico tipoServico2 : lista) {
-			
-			if(tipoServico2.getCodigo().equals(tipoServico.getCodigo() )) {
-				//remove da lista
-				lista.remove(tipoServico2);
-				break;
-			}
-		}
-			
-		return ResponseEntity.ok().build();
-	}		
+	}
+
 }
