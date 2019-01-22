@@ -4,17 +4,20 @@ package br.com.iftm.business.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import br.com.iftm.business.BusinessExecption;
 import br.com.iftm.business.TipoServicoBusiness;
 import br.com.iftm.dao.TipoServicoDAO;
-import br.com.iftm.dao.impl.TipoServicoDAOImpl;
 import br.com.iftm.entily.TipoServico;
 
+@Service
 public class TipoServicoBusinessImpl implements TipoServicoBusiness {
 
-	private TipoServicoDAO dao = new TipoServicoDAOImpl();
+	@Autowired // procura pela classe, evita de instanciar
+	private TipoServicoDAO dao;
 
 	@Override
 	public TipoServico create(TipoServico tipoServico) throws BusinessExecption {

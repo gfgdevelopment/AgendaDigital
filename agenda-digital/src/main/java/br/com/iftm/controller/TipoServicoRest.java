@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.websocket.server.PathParam;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.iftm.business.BusinessExecption;
 import br.com.iftm.business.TipoServicoBusiness;
-import br.com.iftm.business.impl.TipoServicoBusinessImpl;
 import br.com.iftm.entily.TipoServico;
 
 @RestController // habilita Classe como um servico rest.
 @RequestMapping(value = "/tiposervico") // Nome do Serviço.
 public class TipoServicoRest {
 
-	private TipoServicoBusiness business = new TipoServicoBusinessImpl(); // acessando a classe
+	@Autowired // procura pela classe, evita de instanciar
+	private TipoServicoBusiness business; // acessando a classe
 
 	// CREATE
 	@PostMapping()

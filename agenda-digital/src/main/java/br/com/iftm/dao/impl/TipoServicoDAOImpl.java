@@ -5,9 +5,12 @@ package br.com.iftm.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import br.com.iftm.dao.TipoServicoDAO;
 import br.com.iftm.entily.TipoServico;
 
+@Repository
 public class TipoServicoDAOImpl implements TipoServicoDAO {
 
 	private List<TipoServico> lista = new ArrayList<>();
