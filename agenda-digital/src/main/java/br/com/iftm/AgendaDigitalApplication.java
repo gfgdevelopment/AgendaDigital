@@ -2,8 +2,9 @@ package br.com.iftm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = HibernateJpaAutoConfiguration.class) // adiciona
 public class AgendaDigitalApplication {
 
 	public static void main(String[] args) {
@@ -11,4 +12,3 @@ public class AgendaDigitalApplication {
 	}
 
 }
-

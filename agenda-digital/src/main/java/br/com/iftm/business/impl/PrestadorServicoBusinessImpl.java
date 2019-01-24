@@ -102,7 +102,7 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 	}
 
 	@Override
-	public List<PrestadorServico> readByCidade(Cidade cidade) throws BusinessExecption {
+	public List<PrestadorServico> readByCidade(Cidade cidade) throws BusinessExecption { // CORRIGIR
 
 		// validação
 		if (StringUtils.isEmpty(cidade)) {
