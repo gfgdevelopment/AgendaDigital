@@ -9,8 +9,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.iftm.controller.dto.FiltroPrestado;
 import br.com.iftm.dao.PrestadorServicoDAO;
-import br.com.iftm.entily.Cidade;
 import br.com.iftm.entily.PrestadorServico;
 
 //CAMADA DE DADOS
@@ -72,21 +72,6 @@ public class PrestadorServicoDAOImpl implements PrestadorServicoDAO {
 		return criteria.list();
 	}
 
-	@Override
-	public List<PrestadorServico> readByCidade(Cidade cidade) {
-
-		/*
-		 * List<PrestadorServico> listaRetorno = new ArrayList<>(); // verifica na lista
-		 * for (PrestadorServico prestadorServ : listaPrestador) { if
-		 * (prestadorServ.getCidade().equals(cidade)) { listaRetorno.add(prestadorServ);
-		 * } }
-		 */
-
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PrestadorServico.class);
-		criteria.add(Restrictions.eq("cidade", cidade)); // busca por igualdade
-		return criteria.list();
-	}
-
 	/////////////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
@@ -129,6 +114,32 @@ public class PrestadorServicoDAOImpl implements PrestadorServicoDAO {
 		// deleta no banco
 		PrestadorServico excluiPrestador = sessionFactory.getCurrentSession().get(PrestadorServico.class, id);
 		sessionFactory.getCurrentSession().delete(excluiPrestador);
+	}
+
+	@Override
+	public List<PrestadorServico> readByFiltros(FiltroPrestado filtroPrestado) {
+
+		// lista no banco
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(PrestadorServico.class);
+		Criteria criteriaCidade = criteria.createCriteria("cidade");
+
+		if (!org.springframework.util.StringUtils.isEmpty(filtroPrestado.getNome())) {
+			criteria.add(Restrictions.like("nome", filtroPrestado.getNome(), MatchMode.ANYWHERE).ignoreCase()); //
+		}
+
+		if (filtroPrestado.getEstado() != null) {
+
+			criteriaCidade.add(Restrictions.eq("estado", filtroPrestado.getEstado()));
+		}
+
+		if (filtroPrestado.getCidade() != null && filtroPrestado.getCidade().getCodigo() != null) {
+
+			criteria.add(Restrictions.eq("cidade", filtroPrestado.getCidade()));
+		}
+
+		return criteria.list();
+
 	}
 
 }

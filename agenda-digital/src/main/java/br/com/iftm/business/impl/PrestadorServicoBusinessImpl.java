@@ -10,8 +10,8 @@ import org.springframework.util.StringUtils;
 
 import br.com.iftm.business.BusinessExecption;
 import br.com.iftm.business.PrestadorServicoBusiness;
+import br.com.iftm.controller.dto.FiltroPrestado;
 import br.com.iftm.dao.PrestadorServicoDAO;
-import br.com.iftm.entily.Cidade;
 import br.com.iftm.entily.PrestadorServico;
 import br.com.iftm.entily.Telefone;
 import br.com.iftm.entily.TipoServico;
@@ -111,17 +111,6 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 		return prestadorDao.readByName(nome); // trata a parte de persistência (via interface)
 	}
 
-	@Override
-	@Transactional(readOnly = true) // exige que faça somente leitura
-	public List<PrestadorServico> readByCidade(Cidade cidade) throws BusinessExecption { // CORRIGIR
-
-		// validação
-		if (StringUtils.isEmpty(cidade)) {
-			throw new BusinessExecption("Cidade Requerido!"); // excessão disparada pela camada Business
-		}
-		return prestadorDao.readByCidade(cidade); // trata a parte de persistência (via interface)
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
@@ -201,6 +190,13 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 			throw new BusinessExecption("Nome Requerido!"); // excessão disparada pela camada Business
 		}
 		prestadorDao.delete(id); // trata a parte de persistência (via interface)
+	}
+
+	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
+	public List<PrestadorServico> readByFiltros(FiltroPrestado filtroPrestado) throws BusinessExecption {
+
+		return prestadorDao.readByFiltros(filtroPrestado);
 	}
 
 }

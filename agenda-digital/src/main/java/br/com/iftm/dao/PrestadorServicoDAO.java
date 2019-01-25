@@ -2,7 +2,7 @@ package br.com.iftm.dao;
 
 import java.util.List;
 
-import br.com.iftm.entily.Cidade;
+import br.com.iftm.controller.dto.FiltroPrestado;
 import br.com.iftm.entily.PrestadorServico;
 
 public interface PrestadorServicoDAO {
@@ -13,10 +13,10 @@ public interface PrestadorServicoDAO {
 
 	List<PrestadorServico> readByName(String nome);
 
-	List<PrestadorServico> readByCidade(Cidade cidade);
-
 	PrestadorServico update(PrestadorServico prestadorServ);
 
 	void delete(Integer id);
+
+	List<PrestadorServico> readByFiltros(FiltroPrestado filtroPrestado);
 
 }

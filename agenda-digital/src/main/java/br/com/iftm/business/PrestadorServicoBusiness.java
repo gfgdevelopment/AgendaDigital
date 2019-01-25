@@ -2,7 +2,7 @@ package br.com.iftm.business;
 
 import java.util.List;
 
-import br.com.iftm.entily.Cidade;
+import br.com.iftm.controller.dto.FiltroPrestado;
 import br.com.iftm.entily.PrestadorServico;
 
 public interface PrestadorServicoBusiness {
@@ -20,10 +20,10 @@ public interface PrestadorServicoBusiness {
 
 	List<PrestadorServico> readByName(String nome) throws BusinessExecption;
 
-	List<PrestadorServico> readByCidade(Cidade cidade) throws BusinessExecption;
-
 	PrestadorServico update(PrestadorServico prestadorServ) throws BusinessExecption;
 
 	void delete(Integer id) throws BusinessExecption;
+
+	List<PrestadorServico> readByFiltros(FiltroPrestado filtroPrestado) throws BusinessExecption;;
 
 }
