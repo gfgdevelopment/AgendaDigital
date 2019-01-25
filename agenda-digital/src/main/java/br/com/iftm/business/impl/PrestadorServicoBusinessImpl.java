@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import br.com.iftm.business.BusinessExecption;
@@ -15,12 +17,14 @@ import br.com.iftm.entily.Telefone;
 import br.com.iftm.entily.TipoServico;
 
 @Service
+@Transactional // serve para que ocorra a transação do programa com o banco
 public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 
 	@Autowired // procura pela classe, evita de instanciar
 	private PrestadorServicoDAO prestadorDao;
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public PrestadorServico create(PrestadorServico prestadorServ) throws BusinessExecption {
 
 		// validação se está preenchido ou não, dado obrigatório (objeto é string)
@@ -48,9 +52,9 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 			throw new BusinessExecption("TipoLogradouro Requerido!"); // excessão disparada pela camada Business
 		}
 
-		// dado obrigatório, (objeto é string)
-		if (StringUtils.isEmpty(prestadorServ.getCep())) {
-			throw new BusinessExecption("Cep Requerido!"); // excessão disparada pela camada Business
+		// dado obrigatório, (objeto é Int)
+		if (prestadorServ.getNumero() == null) {
+			throw new BusinessExecption("Numero_Endereco Requerido!"); // excessão disparada pela camada Business
 		}
 
 		// dado obrigatório, (objeto se compara com NULL)
@@ -67,10 +71,14 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 			if (telefone.getNumero() == null) {
 				throw new BusinessExecption("Número Telefone Requerido!");
 			}
+
+			telefone.setPrestadorServico(prestadorServ);
+
 		}
 
+		// dado obrigatório, (objeto se compara com NULL)
 		if (prestadorServ.getTipoServicos() == null || prestadorServ.getTipoServicos().isEmpty()) {
-			throw new BusinessExecption("Pelo menos um tipo de serviço é Requerido");
+			throw new BusinessExecption("Pelo menos um tipo de serviço é Requerido"); // possui chave estrangeira
 		}
 
 		for (TipoServico tipoServico : prestadorServ.getTipoServicos()) {
@@ -86,12 +94,14 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
 	public List<PrestadorServico> read() throws BusinessExecption {
 		// chama a camada DAO (dados)
 		return prestadorDao.read();
 	}
 
 	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
 	public List<PrestadorServico> readByName(String nome) throws BusinessExecption {
 
 		// validação
@@ -102,6 +112,7 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 	}
 
 	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
 	public List<PrestadorServico> readByCidade(Cidade cidade) throws BusinessExecption { // CORRIGIR
 
 		// validação
@@ -114,6 +125,7 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public PrestadorServico update(PrestadorServico prestadorServ) throws BusinessExecption {
 
 		if (prestadorServ.getCodigo() == null) {
@@ -140,9 +152,9 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 			throw new BusinessExecption("TipoLogradouro Requerido!"); // excessão disparada pela camada Business
 		}
 
-		// dado obrigatório, (objeto é string)
-		if (StringUtils.isEmpty(prestadorServ.getCep())) {
-			throw new BusinessExecption("Cep Requerido!"); // excessão disparada pela camada Business
+		// dado obrigatório, (objeto é Int)
+		if (prestadorServ.getNumero() == null) {
+			throw new BusinessExecption("Numero Requerido!"); // excessão disparada pela camada Business
 		}
 
 		// dado obrigatório, (objeto se compara com NULL)
@@ -159,6 +171,9 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 			if (telefone.getNumero() == null) {
 				throw new BusinessExecption("Número Telefone Requerido!");
 			}
+
+			telefone.setPrestadorServico(prestadorServ);
+
 		}
 
 		if (prestadorServ.getTipoServicos() == null || prestadorServ.getTipoServicos().isEmpty()) {
@@ -178,6 +193,7 @@ public class PrestadorServicoBusinessImpl implements PrestadorServicoBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public void delete(Integer id) throws BusinessExecption {
 
 		if (id == null) {

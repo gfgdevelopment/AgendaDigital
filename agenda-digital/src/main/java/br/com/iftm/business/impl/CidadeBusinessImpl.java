@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import br.com.iftm.business.BusinessExecption;
@@ -15,12 +17,14 @@ import br.com.iftm.entily.enums.Estado;
 //CAMADA DE NEGÓCIO (com cada função)
 
 @Service
+@Transactional // serve para que ocorra a transação do programa com o banco
 public class CidadeBusinessImpl implements CidadeBusiness {
 
 	@Autowired // procura pela classe, evita de instanciar
 	private CidadeDAO cidadeDao;
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public Cidade create(Cidade cidade) throws BusinessExecption {
 		// validação se está preenchido ou não
 		if (StringUtils.isEmpty(cidade.getNome())) {
@@ -37,6 +41,7 @@ public class CidadeBusinessImpl implements CidadeBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
 	public List<Cidade> read() {
 		// chama a camada DAO (dados)
 		return cidadeDao.read(); // trata a parte de persistência (via interface)
@@ -45,6 +50,7 @@ public class CidadeBusinessImpl implements CidadeBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public Cidade update(Cidade cidade) throws BusinessExecption {
 
 		if (cidade.getCodigo() == null) {
@@ -65,6 +71,7 @@ public class CidadeBusinessImpl implements CidadeBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED) // exige que abre a transação e propaga para outros métodos
 	public void delete(Integer id) throws BusinessExecption {
 
 		if (id == null) {
@@ -77,6 +84,7 @@ public class CidadeBusinessImpl implements CidadeBusiness {
 	////////////////////////////////////////////////////////////////////////////////////
 
 	@Override
+	@Transactional(readOnly = true) // exige que faça somente leitura
 	public List<Cidade> readByEstado(Estado estado) throws BusinessExecption {
 
 		// validação

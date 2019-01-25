@@ -1,12 +1,10 @@
 package br.com.iftm.dao.impl;
 
-//CAMADA DE DADOS
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,8 +18,10 @@ public class TipoServicoDAOImpl implements TipoServicoDAO {
 	@Autowired // chama o metodo construtor sem ter que declarar
 	private SessionFactory sessionFactory; // chama função atraves da classe DAOConfig
 
-	private List<TipoServico> lista = new ArrayList<>(); // salva na lista
-	private int indice = 0;
+	/*
+	 * private List<TipoServico> lista = new ArrayList<>(); // salva na lista
+	 * private int indice = 0; Id manual
+	 */
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public class TipoServicoDAOImpl implements TipoServicoDAO {
 		 */
 
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TipoServico.class);
-		criteria.add(Restrictions.like("nome", nome).ignoreCase()); // adiciona restrição
+		criteria.add(Restrictions.like("nome", nome, MatchMode.ANYWHERE).ignoreCase()); // adiciona restrição
 
 		return criteria.list();
 	}

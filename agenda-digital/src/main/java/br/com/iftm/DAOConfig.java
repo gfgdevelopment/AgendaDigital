@@ -47,6 +47,8 @@ public class DAOConfig {
 	// onde fica o dialect
 	private final Properties hibernateProperties() {
 		Properties hibernateProperties = new Properties();
+		hibernateProperties.setProperty("hibernate.show_sql", "true"); // mostra o comando sql no console
+		hibernateProperties.setProperty("hibernate.format_sql", "true");
 		hibernateProperties.setProperty("hibernate.hbm2ddl.auto", "update");
 		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
 
